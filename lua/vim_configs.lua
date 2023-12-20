@@ -7,3 +7,4 @@ vim.o.mouse = 'a'
 vim.o.undofile = true
 vim.o.ignorecase = true
 vim.o.smartcase = true
+vim.o.clipboard = 'unnamedplus'
