@@ -37,3 +37,11 @@ choco install fd -y
 Set-ExecutionPolicy Bypass -Scope Process -Force; Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
 ```
 
+## CargoBinInstall
+```console
+Set-ExecutionPolicy Unrestricted -Scope Process; iex (iwr "https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.ps1").Content
+```
+
+## Cargo Watch
+```console
+cargo binstall cargo-watch
