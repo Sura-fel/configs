@@ -41,7 +41,39 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; Import-Module $env:ChocolateyI
 ```console
 Set-ExecutionPolicy Unrestricted -Scope Process; iex (iwr "https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.ps1").Content
 ```
+** Or **
 
+```console
+$ErrorActionPreference = "Stop"
+Set-PSDebug -Trace 1
+$tmpdir = ".\tmp\"
+mkdir $tmpdir
+cd $tmpdir
+$base_url = "https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-"
+$proc_arch = [Environment]::GetEnvironmentVariable("PROCESSOR_ARCHITECTURE", [EnvironmentVariableTarget]::Machine)
+if ($proc_arch -eq "AMD64") {
+	$arch = "x86_64"
+} elseif ($proc_arch -eq "ARM64") {
+	$arch = "aarch64"
+} else {
+	Write-Host "Unsupported Architecture: $type" -ForegroundColor Red
+	[Environment]::Exit(1)
+}
+$url = "$base_url$arch-pc-windows-msvc.zip"
+Invoke-WebRequest $url -OutFile ".\cargo-binstall.zip"
+Expand-Archive -Force ".\cargo-binstall.zip" ".\cargo-binstall"
+Write-Host ""
+Invoke-Expression ".\cargo-binstall\cargo-binstall.exe -y --force cargo-binstall"
+cd ..
+Remove-Item -Recurse -Force $tmpdir
+$cargo_home = if ($Env:CARGO_HOME -ne $null) { $Env:CARGO_HOME } else { "$HOME\.cargo" }
+if ($Env:Path -split ";" -notcontains "$cargo_home\bin") {
+	Write-Host ""
+	Write-Host "Your path is missing $cargo_home\bin, you might want to add it." -ForegroundColor Red
+	Write-Host ""
+}
+```
 ## Cargo Watch
 ```console
 cargo binstall cargo-watch
+```
